@@ -72,6 +72,8 @@ export default {
 .home-left-container {
   background: #fff;
   padding: 0 20px;
+  height: 100%;
+  overflow-y: auto;
   border-radius: 4px;
   .title {
     font-size: 16px;

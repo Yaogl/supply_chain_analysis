@@ -62,6 +62,13 @@
                 </p>
                 <p>与长城汽车合作建设XXX项目，项目金额100万</p>
             </a-timeline-item>
+            <a-timeline-item>
+                <p>
+                    <i class="iconfont">&#xe64f;</i>
+                    2020年-12月-30日
+                </p>
+                <p>与长城汽车合作建设XXX项目，项目金额100万</p>
+            </a-timeline-item>
         </a-timeline>
         <p class="more">
             加载更多
@@ -79,8 +86,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .home-right-container {
+  position: relative;
   background: #fff;
   padding: 0 20px;
+  height: 100%;
+  overflow-y: auto;
   border-radius: 4px;
   .title {
     font-size: 16px;
@@ -111,7 +121,7 @@ export default {
         color: #999999;
         font-size: 13px;
         text-align: center;
-        padding-bottom: 10px;
+        margin-bottom: 10px;
         .iconfont{
             font-size: 10px;
         }
