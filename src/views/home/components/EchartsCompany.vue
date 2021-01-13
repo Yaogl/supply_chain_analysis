@@ -34,7 +34,7 @@ export default {
     initCharts() {
       this.instance && this.instance.dispose();
       this.instance = this.$echarts.init(document.getElementById("mountNode"));
-      this.instance.showLoading();
+      // this.instance.showLoading();
       this.getChartData();
       let option = this.getChartOption();
       this.createChart(option);
@@ -50,7 +50,6 @@ export default {
         this.$emit("chart-click", params);
       });
       this.instance.hideLoading();
-      this.chartResize();
       window.addEventListener("resize", this.chartResize);
     },
     getChartOption() {
@@ -101,19 +100,19 @@ export default {
     getChartData() {
       this.data = resetData();
       this.companyList.map((com, index) => {
-        if (index < 30) {
+        if (index < 1000) {
           com.name &&
             this.data.nodes.push({
-              name: com.name + "-" + index,
+              name: com.name,
               symbolSize: 70,
               itemStyle: { color: "#006acc" },
               label: { color: "#fff" },
             });
           com.name &&
             this.data.edges.push({
-              source: com.name + "-" + index,
+              source: com.name,
               target: "长城控股",
-              name: "法人",
+              name: "供应商",
               lineStyle: {
                 color: "#56C7E3",
               },

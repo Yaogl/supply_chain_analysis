@@ -11,18 +11,23 @@
           >
             <a-icon slot="prefix" type="search" />
           </a-input>
-          <a-button type="primary" size="large"> 搜索 </a-button>
+          <a-button type="primary" size="large" @click="search"> 搜索 </a-button>
         </div>
         <div class="search-item flex">
           <span class="label"> 筛选 </span>
-          <a-select placeholder="请选择" size="large">
-            <a-select-option value="1"> 选项1 </a-select-option>
+          <a-select placeholder="请选择筛选条数" size="large" v-model="query.select" @change="search">
+            <a-select-option :value="10">10条</a-select-option>
+            <a-select-option :value="20">20条</a-select-option>
+            <a-select-option :value="30">30条</a-select-option>
+            <a-select-option :value="40">40条</a-select-option>
           </a-select>
         </div>
-        <div class="search-item flex">
-          <span class="label"> 交易类型 </span>
-          <a-select placeholder="请选择" size="large">
-            <a-select-option value="1"> 选项1 </a-select-option>
+        <div class="search-item flex" v-if="query.content === '供应商'">
+          <span class="label">交易类型</span>
+          <a-select placeholder="请选择" size="large" v-model="query.transType" @change="search">
+            <a-select-option value="软件">软件</a-select-option>
+            <a-select-option value="硬件">硬件</a-select-option>
+            <a-select-option value="服务">服务</a-select-option>
           </a-select>
         </div>
       </div>
@@ -33,11 +38,13 @@
         </div>
         <div class="center">
           <div class="left-chart">
-            <a-radio-group default-value="a" button-style="solid">
-              <a-radio-button value="a"> 供应商 </a-radio-button>
-              <a-radio-button value="b"> 合作伙伴 </a-radio-button>
+            <a-radio-group default-value="a" button-style="solid" v-model="query.content" @change="search">
+              <a-radio-button value="供应商"> 供应商 </a-radio-button>
+              <a-radio-button value="客户"> 合作伙伴 </a-radio-button>
             </a-radio-group>
             <home-charts :companyList="allList" v-if="allList && allList.length"/>
+            <!-- <echarts-company :companyList="allList" v-if="allList && allList.length"/> -->
+            
             <div class="left-slider">
               <p class="tip">交易金额(单位：万)</p>
               <a-slider
@@ -64,6 +71,7 @@
 import HomeLeftSide from "./components/HomeLeftSide";
 import HomeRightSide from "./components/HomeRightSide";
 import HomeCharts from "./components/HomeCharts";
+// import EchartsCompany from "./components/EchartsCompany";
 // import { getBaseInfo } from '@/api/company.js'
 
 export default {
@@ -72,6 +80,7 @@ export default {
     HomeLeftSide,
     HomeRightSide,
     HomeCharts,
+    // EchartsCompany
   },
   data() {
     return {
@@ -79,7 +88,9 @@ export default {
         key_word: "",
         money: 0,
         times: 0,
-        content: "客户",
+        content: "供应商",
+        select: undefined,
+        transType: undefined // 交易类型
       },
       allList: [],
       loading: false,
@@ -96,19 +107,29 @@ export default {
     // getBaseInfo(this.query).then(res => {
     //   this.allList = res.get_company
     //   console.log(this.allList);
+    //   // this.
     //   localStorage.setItem('allCompany', JSON.stringify(this.allList))
     // })
     this.search();
   },
   methods: {
+    getParams() {
+      let params = JSON.parse(JSON.stringify(this.query))
+      if (params.content === '供应商' && params.transType) {
+        params.content = params.transType
+      }
+      delete params.transType
+      return params
+    },
     search() {
+      console.log(this.getParams());
       this.loading = true;
       setTimeout(() => {
         this.allList = JSON.parse(localStorage.getItem("allCompany"));
         this.loading = false;
-      }, 2000);
-    },
-  },
+      }, 900);
+    }
+  }
 };
 </script>
 <style lang="less">
