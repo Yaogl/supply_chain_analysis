@@ -4,57 +4,35 @@
       <i class="iconfont">&#xe68c;</i>
       企业基本信息
     </h3>
-    <div class="info">
-      <h5 class="subtitle">沈阳雷安泰德科技发展有限公司</h5>
-      <div class="desc-item">
+    <div class="info" v-if="companyInfo.name">
+      <h5 class="subtitle">{{ companyInfo.name }}</h5>
+      <div class="desc-item" v-if="companyInfo.simple">
         <p class="label">简称：</p>
-        <p class="values">沈阳雷安泰德</p>
+        <p class="values">{{ companyInfo.simple }}</p>
       </div>
 
-      <div class="desc-item">
+      <div class="desc-item" v-if="companyInfo.loc">
         <p class="label">地址：</p>
-        <p class="values">沈阳市和平区三好街100-4号（13-12）室</p>
+        <p class="values">{{ companyInfo.loc }}</p>
       </div>
 
-      <div class="desc-item">
-        <p class="label">税务登记号：</p>
-        <p class="values">91210102784592680B</p>
-      </div>
-
-			<div class="desc-item">
-        <p class="label">注册资本：</p>
-        <p class="values">1000万</p>
-      </div>
-
-			<div class="desc-item">
-        <p class="label">员工数量：</p>
-        <p class="values">50人</p>
-      </div>
-
-			<div class="desc-item">
-        <p class="label">合作开始日期：</p>
-        <p class="values">2019年9月6日</p>
-      </div>
-
-			<div class="desc-item">
+			<div class="desc-item" v-if="companyInfo.money">
         <p class="label">总交易金额：</p>
-        <p class="values">5.118.928.00元</p>
+        <p class="values">{{ transferMoney(companyInfo.money) }}</p>
       </div>
 
 			<div class="desc-item">
         <p class="label">总交易次数：</p>
-        <p class="values">4次</p>
+        <p class="values">{{ companyInfo.times || 0 }} 次</p>
       </div>
 
-			<div class="desc-item">
-        <p class="label">企业风险：</p>
-        <p class="values">涉诉XXX 项</p>
+      <div class="desc-item" v-if="companyInfo.types">
+        <p class="label">客户类型：</p>
+        <p class="values">{{ companyInfo.types }}</p>
       </div>
-
-      <div class="desc-item">
-        <p class="label">是否黑名单：</p>
-        <p class="values">否</p>
-      </div>
+    </div>
+    <div v-else style="margin-top: 50px">
+      <a-empty />
     </div>
   </div>
 </template>
@@ -62,12 +40,20 @@
 <script>
 export default {
   props: {
-    msg: String,
+    companyInfo: {
+      type: Object,
+      default: () => {}
+    }
   },
-};
+  methods: {
+    transferMoney(money) {
+      if (money < 10000) return money + ' 元'
+      return (money / 10000).toFixed(2) + ' 万元'
+    }
+  }
+}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .home-left-container {
   background: #fff;

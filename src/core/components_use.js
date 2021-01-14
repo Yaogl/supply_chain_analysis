@@ -23,7 +23,9 @@ import {
   Timeline,
   Radio,
   Slider,
-  Spin
+  Spin,
+  Empty,
+  LocaleProvider
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
@@ -42,6 +44,8 @@ Vue.use(Timeline)
 Vue.use(Radio)
 Vue.use(Slider)
 Vue.use(Spin)
+Vue.use(Empty)
+Vue.use(LocaleProvider)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

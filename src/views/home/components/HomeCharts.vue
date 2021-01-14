@@ -18,26 +18,10 @@ export default {
     return {
       graph: '',
       data: {
-        nodes: [
-          {
-            id: "长城控股",
-            label: "长城控股",
-            description: '长城控股',
-            size: 70,
-            style: { fill: "#579480" }
-          }
-        ],
-        edges: [
-          // {
-          //   id: "edge1",
-          //   target: "长城控股",
-          //   source: "北京讯利创城科技",
-          //   shape: "self-line",
-          //   label: '自定义箭头路径'
-          // },
-        ],
-      },
-    };
+        nodes: [{ id: '长城控股', label: '长城控股', description: '长城控股', size: 70, style: { fill: '#579480' }}],
+        edges: []
+      }
+    }
   },
   mounted() {
     this.initCharts()
@@ -64,7 +48,7 @@ export default {
             id: nodeInfo.name + '-' + item.key,
             label: this.fittingString(nodeInfo[item.key], 30, 12),
             size: 55,
-            style: { fill: "#0590FA" },
+            style: { fill: '#0590FA' },
           })
           data.edges.push({
             id: 'edge' +  nodeInfo.name + '-' + item.key,
@@ -87,18 +71,18 @@ export default {
             id: item.name,
             label: this.fittingString(item.name, 40, 12),
             size: 50,
-            style: { fill: "#1C66BB" },
+            style: { fill: '#1C66BB' },
           })
           this.data.edges.push({
             id: 'edge' + item.name,
-            target: "长城控股",
+            target: '长城控股',
             source: item.name,
             label: '供应商'
           })
         })
       }
       const graph = new G6.Graph({
-        container: "mountNode",
+        container: 'mountNode',
         width: 900,
         height: 650,
         fitView: {
@@ -110,10 +94,10 @@ export default {
           labelCfg: {
             autoRotate: true,
             style: {
-              fill: '#666666',
+              fill: '#666',
               fontSize: 12,
               background: {
-                fill: '#ffffff',
+                fill: '#fff',
                 padding: [0, 0, 0, 0]
               },
             },
@@ -141,7 +125,7 @@ export default {
           type: "force",
           nodeStrength: -1000,
           linkDistance: 120,
-          gravity: 300
+          layoutAnimation: false
         }
       });
       graph.read(this.data);
@@ -159,15 +143,7 @@ export default {
     },
     resetData() {
       this.data = {
-        nodes: [
-          {
-            id: "长城控股",
-            label: "长城控股",
-            description: '长城控股',
-            size: 70,
-            style: { fill: "#579480" }
-          }
-        ],
+        nodes: [{ id: '长城控股', label: '长城控股', description: '长城控股', size: 70, style: { fill: '#579480' }}],
         edges: []
       }
     },
@@ -205,33 +181,4 @@ export default {
 #mountNode{
   text-align: center;
 }
-// @media (min-width: 1280px) {
-//   #mountNode{
-//     transform: scale(0.7);
-//   }
-// }
-
-// @media (min-width: 1366px) {
-//   #mountNode{
-//     transform: scale(0.8);
-//   }
-// }  
-
-// @media (min-width: 1440px) {
-//   #mountNode{
-//     transform: scale(0.9);
-//   }
-// } 
-
-// @media (min-width: 1680px) {
-//   #mountNode{
-//     transform: scale(1);
-//   }
-// } 
-// @media (min-width: 1920px) {
-//   #mountNode{
-//     transform: scale(1);
-//   }
-// }
-
 </style>

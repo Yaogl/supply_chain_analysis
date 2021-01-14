@@ -11,20 +11,23 @@
           >
             <a-icon slot="prefix" type="search" />
           </a-input>
-          <a-button type="primary" size="large" @click="search"> 搜索 </a-button>
+          <a-button type="primary" size="large" @click="changeParams"> 搜索 </a-button>
         </div>
         <div class="search-item flex">
           <span class="label"> 筛选 </span>
-          <a-select placeholder="请选择筛选条数" size="large" v-model="query.select" @change="search">
+          <a-select placeholder="请选择筛选条数" size="large" v-model="query.select" @change="changeParams">
             <a-select-option :value="10">10条</a-select-option>
             <a-select-option :value="20">20条</a-select-option>
             <a-select-option :value="30">30条</a-select-option>
             <a-select-option :value="40">40条</a-select-option>
+            <a-select-option :value="50">50条</a-select-option>
+            <a-select-option :value="60">60条</a-select-option>
+            <a-select-option :value="70">70条</a-select-option>
           </a-select>
         </div>
         <div class="search-item flex" v-if="query.content === '供应商'">
           <span class="label">交易类型</span>
-          <a-select placeholder="请选择" size="large" v-model="query.transType" @change="search">
+          <a-select placeholder="请选择" size="large" v-model="query.transType" @change="changeParams">
             <a-select-option value="软件">软件</a-select-option>
             <a-select-option value="硬件">硬件</a-select-option>
             <a-select-option value="服务">服务</a-select-option>
@@ -34,33 +37,30 @@
 
       <div class="content">
         <div class="left">
-          <home-left-side />
+          <home-left-side :companyInfo="companyInfo"/>
         </div>
         <div class="center">
           <div class="left-chart">
-            <a-radio-group default-value="a" button-style="solid" v-model="query.content" @change="search">
+            <a-radio-group default-value="a" button-style="solid" v-model="query.content" @change="changeCustom">
+              <a-radio-button value=""> 全部 </a-radio-button>
               <a-radio-button value="供应商"> 供应商 </a-radio-button>
-              <a-radio-button value="客户"> 合作伙伴 </a-radio-button>
+              <a-radio-button value="客户"> 客户 </a-radio-button>
             </a-radio-group>
-            <home-charts :companyList="allList" v-if="allList && allList.length"/>
-            <!-- <echarts-company :companyList="allList" v-if="allList && allList.length"/> -->
+            <!-- <home-charts :companyList="allList" v-if="allList && allList.length"/> -->
+            <echarts-company :companyList="allList" @chartClick="chooseCompany"/>
             
             <div class="left-slider">
               <p class="tip">交易金额(单位：万)</p>
-              <a-slider
-                :marks="marks"
-                v-model="query.money"
-                @afterChange="search"
-              />
+              <a-slider :marks="moneyMarks" v-model="query.money" :max="maxMoney" @afterChange="changeParams"/>
             </div>
           </div>
           <div class="right-slider">
             <p class="tip">交易频次(单位：次)</p>
-            <a-slider :marks="marks" v-model="query.times" vertical />
+            <a-slider :marks="timeMarks" v-model="query.times" vertical :max="maxTimes" @afterChange="changeParams"/>
           </div>
         </div>
         <div class="right">
-          <home-right-side />
+          <home-right-side :companyInfo="companyInfo"/>
         </div>
       </div>
     </a-spin>
@@ -68,66 +68,99 @@
 </template>
 
 <script>
-import HomeLeftSide from "./components/HomeLeftSide";
-import HomeRightSide from "./components/HomeRightSide";
-import HomeCharts from "./components/HomeCharts";
-// import EchartsCompany from "./components/EchartsCompany";
-// import { getBaseInfo } from '@/api/company.js'
+import HomeLeftSide from './components/HomeLeftSide'
+import HomeRightSide from './components/HomeRightSide'
+// import HomeCharts from "./components/HomeCharts";
+import EchartsCompany from './components/EchartsCompany'
+import { getBaseInfo } from '@/api/company.js'
+const resetQuery = () => {
+  return {
+    key_word: '',
+    money: 0,
+    times: 0,
+    content: '',
+    select: 10,
+    transType: undefined // 交易类型
+  }
+}
 
 export default {
-  id: "Home",
   components: {
     HomeLeftSide,
     HomeRightSide,
-    HomeCharts,
-    // EchartsCompany
+    // HomeCharts,
+    EchartsCompany
   },
   data() {
     return {
-      query: {
-        key_word: "",
-        money: 0,
-        times: 0,
-        content: "供应商",
-        select: undefined,
-        transType: undefined // 交易类型
-      },
+      query: resetQuery(),
       allList: [],
       loading: false,
-      marks: {
-        0: "0",
-        25: "25",
-        50: "50",
-        75: "75",
-        100: "100",
-      },
-    };
+      companyInfo: {},
+      timeMarks: {},
+      moneyMarks: {},
+      maxTimes: 0,
+      maxMoney: 0
+    }
   },
   created() {
-    // getBaseInfo(this.query).then(res => {
-    //   this.allList = res.get_company
-    //   console.log(this.allList);
-    //   // this.
-    //   localStorage.setItem('allCompany', JSON.stringify(this.allList))
-    // })
-    this.search();
+    this.changeCustom()
   },
   methods: {
+    chooseCompany(name) {
+      this.companyInfo = this.allList.find(item => item.name === name) || {}
+      console.log(this.companyInfo)
+    },
+    // 切换客户类型，清空搜索条件，便于计算 marks值
+    changeCustom(e) {
+      if (e && e.target.value) {
+        this.query.content = e.target.value
+      }
+      this.search(true)
+    },
     getParams() {
       let params = JSON.parse(JSON.stringify(this.query))
       if (params.content === '供应商' && params.transType) {
         params.content = params.transType
       }
+      params.select = params.select || ''
+      params.money = params.money * 10000 || 0 
       delete params.transType
       return params
     },
-    search() {
-      console.log(this.getParams());
-      this.loading = true;
-      setTimeout(() => {
-        this.allList = JSON.parse(localStorage.getItem("allCompany"));
-        this.loading = false;
-      }, 900);
+    changeParams() {
+      this.search()
+    },
+    search(init) {
+      this.loading = true
+      const params = this.getParams()
+      getBaseInfo(params).then(res => {
+        this.loading = false
+        this.allList = res.get_company
+        if (init) { // 如果是初始化，计算一下mark值
+          this.maxTimes = Math.ceil(this.getMax(this.allList, 'times') / 5) * 5
+          this.maxMoney = Math.ceil(this.getMax(this.allList, 'money') / 1000 / 10000) * 1000
+          
+          this.timeMarks = this.getMarks(this.maxTimes, 5)
+          this.moneyMarks = this.getMarks(this.maxMoney, 1000)
+        }
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    getMarks (num, scale) { // num 数字 scale比例
+      const max = Math.ceil(num / scale) * scale
+      let data = {}
+      const p = Math.floor(max / 5)
+      for (let index = 0; index < 5; index++) {
+        const key = (p * (index + 1)) + ''
+        data[key] = key
+      }
+      return data
+    },
+    getMax (list, key) {
+      if (!list.length) return 100
+      return Math.max.apply(Math, list.map(item => { return item[key] }))
     }
   }
 };
@@ -204,6 +237,7 @@ export default {
           background-color: #409eff;
         }
         .ant-slider-handle {
+          margin-top: -4px;
           height: 18px;
           width: 18px;
         }
@@ -230,6 +264,7 @@ export default {
           background-color: #409eff;
         }
         .ant-slider-handle {
+          margin-left: -4px;
           height: 18px;
           width: 18px;
         }
