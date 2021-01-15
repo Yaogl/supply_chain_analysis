@@ -68,7 +68,11 @@ export default {
 		border-bottom: 1px solid #D7D7D7;
     i {
       color: #999999;
-      font-size: 20px;
+    }
+  }
+  @media screen and (min-width:768px) and (max-width: 1680px) {
+    .title{
+      line-height: 50px!important;
     }
   }
   .info {

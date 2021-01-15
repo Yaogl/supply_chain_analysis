@@ -9,50 +9,15 @@
         <a-timeline-item>
           <p class="timer">
             <i class="iconfont">&#xe64f;</i>
-            2020年-12月-30日
+            未知时间
           </p>
-          <p class="values">与长城汽车合作建设XXX项目，项目金额100万</p>
-        </a-timeline-item>
-        <a-timeline-item>
-          <p>
-            <i class="iconfont">&#xe64f;</i>
-            2020年-12月-30日
-          </p>
-          <p>与长城汽车合作建设XXX项目，项目金额100万</p>
-        </a-timeline-item>
-        <a-timeline-item>
-          <p>
-            <i class="iconfont">&#xe64f;</i>
-            2020年-12月-30日
-          </p>
-          <p>与长城汽车合作建设XXX项目，项目金额100万</p>
-        </a-timeline-item>
-        <a-timeline-item>
-          <p>
-            <i class="iconfont">&#xe64f;</i>
-            2020年-12月-30日
-          </p>
-          <p>与长城汽车合作建设XXX项目，项目金额100万</p>
-        </a-timeline-item>
-        <a-timeline-item>
-          <p>
-            <i class="iconfont">&#xe64f;</i>
-            2020年-12月-30日
-          </p>
-          <p>与长城汽车合作建设XXX项目，项目金额100万</p>
-        </a-timeline-item>
-        <a-timeline-item>
-          <p>
-            <i class="iconfont">&#xe64f;</i>
-            2020年-12月-30日
-          </p>
-          <p>与长城汽车合作建设XXX项目，项目金额100万</p>
+          <p class="values">{{ companyInfo.things }}</p>
         </a-timeline-item>
       </a-timeline>
-      <p class="more">
+      <!-- <p class="more">
         加载更多
         <i class="iconfont">&#xe628;</i>
-      </p>
+      </p> -->
     </div>
     <div v-else style="margin-top: 50px">
       <a-empty />
@@ -86,7 +51,11 @@ export default {
     border-bottom: 1px solid #d7d7d7;
     i {
       color: #999999;
-      font-size: 20px;
+    }
+  }
+  @media screen and (min-width:768px) and (max-width: 1680px) {
+    .title{
+      line-height: 50px!important;
     }
   }
   .info {

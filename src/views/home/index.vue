@@ -7,15 +7,17 @@
             ref="userNameInput"
             v-model="query.key_word"
             placeholder="请输入内容"
-            size="large"
+            :size="inputSize"
+            allowClear
+            @keyup.enter.native="search">
           >
             <a-icon slot="prefix" type="search" />
           </a-input>
-          <a-button type="primary" size="large" @click="changeParams"> 搜索 </a-button>
+          <a-button type="primary" :size="inputSize" @click="changeParams"> 搜索 </a-button>
         </div>
         <div class="search-item flex">
           <span class="label"> 筛选 </span>
-          <a-select placeholder="请选择筛选条数" size="large" v-model="query.select" @change="changeParams">
+          <a-select placeholder="请选择筛选条数" :size="inputSize" v-model="query.select" @change="changeParams" allowClear>
             <a-select-option :value="10">10条</a-select-option>
             <a-select-option :value="20">20条</a-select-option>
             <a-select-option :value="30">30条</a-select-option>
@@ -27,7 +29,7 @@
         </div>
         <div class="search-item flex" v-if="query.content === '供应商'">
           <span class="label">交易类型</span>
-          <a-select placeholder="请选择" size="large" v-model="query.transType" @change="changeParams">
+          <a-select placeholder="请选择" :size="inputSize" v-model="query.transType" @change="changeParams" allowClear>
             <a-select-option value="软件">软件</a-select-option>
             <a-select-option value="硬件">硬件</a-select-option>
             <a-select-option value="服务">服务</a-select-option>
@@ -79,7 +81,7 @@ const resetQuery = () => {
     money: 0,
     times: 0,
     content: '',
-    select: 10,
+    select: undefined,
     transType: undefined // 交易类型
   }
 }
@@ -100,30 +102,32 @@ export default {
       timeMarks: {},
       moneyMarks: {},
       maxTimes: 0,
-      maxMoney: 0
+      maxMoney: 0,
+      inputSize: 'large'
     }
   },
   created() {
-    this.changeCustom()
+    const width = document.documentElement.clientWidth || document.body.clientWidth
+    this.inputSize = width < 1600 ? 'default' : 'large'
+    this.search(true)
   },
   methods: {
     chooseCompany(name) {
       this.companyInfo = this.allList.find(item => item.name === name) || {}
-      console.log(this.companyInfo)
     },
     // 切换客户类型，清空搜索条件，便于计算 marks值
     changeCustom(e) {
       if (e && e.target.value) {
         this.query.content = e.target.value
       }
-      this.search(true)
+      this.search()
     },
     getParams() {
       let params = JSON.parse(JSON.stringify(this.query))
       if (params.content === '供应商' && params.transType) {
         params.content = params.transType
       }
-      params.select = params.select || ''
+      params.select = params.select || 10000
       params.money = params.money * 10000 || 0 
       delete params.transType
       return params
@@ -136,7 +140,7 @@ export default {
       const params = this.getParams()
       getBaseInfo(params).then(res => {
         this.loading = false
-        this.allList = res.get_company
+        this.allList = res.get_company.filter(item => item.simple !== '长城控股')
         if (init) { // 如果是初始化，计算一下mark值
           this.maxTimes = Math.ceil(this.getMax(this.allList, 'times') / 5) * 5
           this.maxMoney = Math.ceil(this.getMax(this.allList, 'money') / 1000 / 10000) * 1000
@@ -196,6 +200,15 @@ export default {
       }
     }
   }
+  @media screen and (min-width:768px) and (max-width: 1680px) {
+    .search-bar{
+      height: 70px!important;
+      .ant-select{
+        height: auto!important;
+      }
+    }
+  }
+
   .content {
     display: flex;
     margin-top: 10px;
@@ -246,11 +259,14 @@ export default {
         }
       }
       .right-slider {
-        width: 120px;
+        width: 70px;
         height: 680px;
         display: flex;
         align-items: center;
         flex-direction: column;
+        .tip{
+          margin-left: -40px;
+        }
         .ant-slider-dot {
           left: 4px;
           height: 10px;

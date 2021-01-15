@@ -14,15 +14,15 @@ export default {
     }
   },
   created() {
-    var s;
-    function resize() {
-      s = window.screen.width / 1920;
-      document.body.style.zoom = s;
-    }
-    window.onresize = function () {
-      resize();
-    }
-    resize();
+    // var s;
+    // function resize() {
+    //   s = window.screen.width / 1920;
+    //   document.body.style.zoom = s;
+    // }
+    // window.onresize = function () {
+    //   resize();
+    // }
+    // resize();
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="home-charts-container">
-    <div id="mountNode" :style="`zoom:${zoom};height: 100%; width: 100%`"></div>
+    <div id="mountNode" :style="`height: 100%; width: 100%`"></div>
   </div>
 </template>
 
@@ -38,8 +38,8 @@ export default {
     };
   },
    created () {
-    const width = document.documentElement.clientWidth || document.body.clientWidth
-    this.zoom = 1 / (width / 1920)
+    // const width = document.documentElement.clientWidth || document.body.clientWidth
+    // this.zoom = 1 / (width / 1920)
   },
   mounted() {
     this.initCharts()
@@ -58,6 +58,7 @@ export default {
       }
       this.instance.setOption(option)
       this.instance.off('click')
+      window.addEventListener('resize', this.chartResize)
       this.instance.on('click', (params) => {
         if (params.dataType === 'node' && params.name !== '长城控股') {
           this.$emit("chartClick",  getName(params.name))
@@ -69,15 +70,18 @@ export default {
       const len = this.companyList.length || 0
       return {
         tooltip: {
-          formatter(x) {
-            return getName(x.data.name)
+          formatter(params) {
+            if (params.dataType === 'node' && params.data.name !== '长城控股') {
+              return (params.data.category ? '供应商' : '客户') + '：' + getName(params.data.name)
+            }
+            return getName(params.data.name)
           }
         },
         series: [
           {
             type: 'graph',
             layout: 'force',
-            zoom:  len < 10 ? 1.3 : len < 20 ? 1.1 : (len < 40 ? 0.9 : (len < 70 ? 0.7 : 0.6)),
+            zoom:  len < 10 ? 1.3 : len < 20 ? 1.1 : (len < 40 ? 1 : (len < 70 ? 0.75 : 0.6)),
             roam: true,
             edgeSymbol: ['', 'arrow'],
             edgeSymbolSize: [10, 10],
@@ -125,6 +129,7 @@ export default {
             },
             
             force: {
+              initLayout: 'circular',
 							layoutAnimation: false,
               repulsion: 500,
               edgeLength: len < 10 ? 150 : len < 20 ? 120 : (len < 40 ? 100 : (len < 70 ? 90 : 80)),
@@ -157,6 +162,10 @@ export default {
           });
       });
     },
+    // 屏幕变化，数据过多resize会卡顿，暂时关掉
+    chartResize () {
+      // this.instance.resize()
+    },
     calcStrLen(str) {
       var len = 0;
       for (var i = 0; i < str.length; i++) {
@@ -183,13 +192,14 @@ export default {
   },
   beforeDestroy() {
     this.instance && this.instance.dispose();
+    window.removeEventListener('resize', this.chartResize, false)
   },
 };
 </script>
 
 <style scoped lang="less">
 .home-charts-container {
-  height: 650px;
+  height: 680px;
 }
 #mountNode {
   text-align: center;
