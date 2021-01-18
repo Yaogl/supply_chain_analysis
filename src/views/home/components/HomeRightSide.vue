@@ -8,8 +8,8 @@
       <a-timeline>
         <a-timeline-item>
           <p class="timer">
-            <i class="iconfont">&#xe64f;</i>
-            未知时间
+            <!-- <i class="iconfont">&#xe64f;</i> -->
+            <!-- 未知时间 -->
           </p>
           <p class="values">{{ companyInfo.things }}</p>
         </a-timeline-item>

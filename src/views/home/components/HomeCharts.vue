@@ -129,7 +129,7 @@ export default {
         }
       });
       graph.read(this.data);
-      // graph.fitView();
+      
       // graph.on('click', (ev) => {
       //   if (!ev.item || ev.item._cfg.type === 'edge') return
       //   const itemModel = ev.item.getModel();

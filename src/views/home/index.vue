@@ -2,7 +2,7 @@
   <div class="home-container">
     <a-spin :spinning="loading">
       <div class="search-bar flex">
-        <div class="flex" style="width: 52%">
+        <div class="flex" style="width: 40%">
           <a-input
             ref="userNameInput"
             v-model="query.key_word"
@@ -35,6 +35,12 @@
             <a-select-option value="服务">服务</a-select-option>
           </a-select>
         </div>
+        <div class="search-item flex">
+          <span class="label">风险识别</span>
+          <a-select placeholder="请选择" :size="inputSize" allowClear>
+            <a-select-option  v-for="(item, index) in riskList" :key="index" :value="item">{{ item }}</a-select-option>
+          </a-select>
+        </div>
       </div>
 
       <div class="content">
@@ -49,7 +55,7 @@
               <a-radio-button value="客户"> 客户 </a-radio-button>
             </a-radio-group>
             <!-- <home-charts :companyList="allList" v-if="allList && allList.length"/> -->
-            <echarts-company :companyList="allList" @chartClick="chooseCompany"/>
+            <echarts-company :companyList="allList" @chartClick="chooseCompany" @resetSome="resetSome"/>
             
             <div class="left-slider">
               <p class="tip">交易金额(单位：万)</p>
@@ -75,6 +81,7 @@ import HomeRightSide from './components/HomeRightSide'
 // import HomeCharts from "./components/HomeCharts";
 import EchartsCompany from './components/EchartsCompany'
 import { getBaseInfo } from '@/api/company.js'
+import { riskList } from './config'
 const resetQuery = () => {
   return {
     key_word: '',
@@ -82,6 +89,7 @@ const resetQuery = () => {
     times: 0,
     content: '',
     select: undefined,
+    show: '', // 点击详情查询使用，首页默认为空
     transType: undefined // 交易类型
   }
 }
@@ -103,7 +111,8 @@ export default {
       moneyMarks: {},
       maxTimes: 0,
       maxMoney: 0,
-      inputSize: 'large'
+      inputSize: 'large',
+      riskList
     }
   },
   created() {
@@ -151,6 +160,10 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    resetSome() {
+      this.query.select = 40
+      this.allList = this.allList.splice(0, 40)
     },
     getMarks (num, scale) { // num 数字 scale比例
       const max = Math.ceil(num / scale) * scale
