@@ -4,8 +4,8 @@
       <a-icon type="unordered-list" />
       相关事件
     </h3>
-    <div class="info" v-if="companyInfo.things && companyInfo.things !== '未记录'">
-      <a-timeline>
+    <div class="info" v-if="isStringAndShow || isArrayAndShow">
+      <a-timeline v-if="isStringAndShow">
         <a-timeline-item>
           <p class="timer">
             <!-- <i class="iconfont">&#xe64f;</i> -->
@@ -14,10 +14,11 @@
           <p class="values">{{ companyInfo.things }}</p>
         </a-timeline-item>
       </a-timeline>
-      <!-- <p class="more">
-        加载更多
-        <i class="iconfont">&#xe628;</i>
-      </p> -->
+      <a-timeline v-if="isArrayAndShow">
+        <a-timeline-item v-for="(item, index) in companyInfo.things" :key="index">
+          <p class="values">{{ item.name }}：{{ item.things }} </p>
+        </a-timeline-item>
+      </a-timeline>
     </div>
     <div v-else style="margin-top: 50px">
       <a-empty />
@@ -31,9 +32,19 @@ export default {
     companyInfo: {
       type: Object,
       default: () => {},
-    },
+    }
   },
-};
+  computed: {
+    isStringAndShow () {
+      const things = this.companyInfo.things
+      return things && things !== '未记录' && typeof things === 'string'
+    },
+    isArrayAndShow () {
+      const things = this.companyInfo.things
+      return things.length && typeof things === 'object'
+    }
+  }
+}
 </script>
 
 <style scoped lang="less">

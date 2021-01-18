@@ -208,7 +208,7 @@ export default {
       getBaseInfo({show: 'show', content: ''}).then(res => {
         this.depth = 1
         const companyInfo = this.companyList.find(item => item.name === name) || {}
-  
+        companyInfo.things = res.get_company
         const itemData = resetData();
         itemData.nodes.push({
           name: companyInfo.name + '***' + 1,

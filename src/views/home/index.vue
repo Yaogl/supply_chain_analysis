@@ -162,7 +162,6 @@ export default {
       })
     },
     resetSome() {
-      this.query.select = 40
       this.allList = this.allList.splice(0, 40)
     },
     getMarks (num, scale) { // num 数字 scale比例
